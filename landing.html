@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中国雪山图鉴</title>
+  <style>
+    /* ====== 全局重置 ====== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', 'Noto Serif SC', serif;
+      overflow-x: hidden;
+      background: #0a0a0a;
+    }
+
+    /* ====== 背景 ====== */
+    .hero-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+    }
+
+    /* ====== 遮罩 ====== */
+    .hero-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.25);
+      transition: background 0.3s ease;
+    }
+
+    /* ====== 顶部导航 ====== */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      transition: all 0.3s ease;
+    }
+
+    .top-nav .logo-link {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: none;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      transition: opacity 0.3s;
+    }
+
+    .top-nav .logo-link:hover {
+      opacity: 0.8;
+    }
+
+    .top-nav .logo-link span {
+      color: #8ab4ff;
+    }
+
+    .top-nav .nav-links {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .top-nav .nav-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .top-nav .nav-links a:hover,
+    .top-nav .nav-links a.active {
+      color: #ffffff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .top-nav .nav-links a.active {
+      color: #8ab4ff;
+      background: rgba(138,180,255,0.1);
+    }
+
+    /* ====== 中间大字 ====== */
+    .hero-content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      text-align: center;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .hero-content h1 {
+      font-family: 'Georgia', serif;
+      font-size: 76px;
+      font-weight: 400;
+      color: #ffffff;
+      letter-spacing: 0.08em;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .hero-content .subtitle {
+      font-family: 'Georgia', serif;
+      font-size: 19px;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.15em;
+      font-weight: 300;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+
+    /* ====== 下滑提示 ====== */
+    .scroll-hint {
+      position: fixed;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      text-align: center;
+      animation: floatDown 2s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    .scroll-hint .arrow {
+      width: 26px;
+      height: 26px;
+      border-right: 2px solid rgba(255,255,255,0.8);
+      border-bottom: 2px solid rgba(255,255,255,0.8);
+      transform: rotate(45deg);
+      margin: 0 auto 8px;
+    }
+
+    .scroll-hint .text {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    @keyframes floatDown {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ====== 底部内容区 ====== */
+    .bottom-section {
+      position: relative;
+      z-index: 3;
+      margin-top: 100vh;
+      min-height: 60vh;
+      background: linear-gradient(180deg, 
+        rgba(11, 11, 26, 0) 0%,
+        rgba(11, 11, 26, 0.6) 20%,
+        rgba(11, 11, 26, 0.95) 40%,
+        rgba(11, 11, 26, 1) 50%,
+        #0b0b1a 100%
+      );
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+    }
+
+    .bottom-section .intro-text {
+      max-width: 650px;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .bottom-section .intro-text h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 16px;
+      font-family: 'Noto Serif SC', serif;
+    }
+
+    .bottom-section .intro-text p {
+      font-size: 16px;
+      color: #8888aa;
+      line-height: 1.8;
+    }
+
+    /* ====== 快速开始按钮 ====== */
+    .quick-start {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .quick-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      text-decoration: none;
+      color: #ffffff;
+      transition: all 0.35s;
+      backdrop-filter: blur(10px);
+    }
+
+    .quick-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(91,154,255,0.3);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .quick-btn .icon {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .quick-btn .name {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .quick-btn .desc {
+      font-size: 12px;
+      color: #8888aa;
+      margin-top: 4px;
+    }
+
+    /* ====== 滚动时模糊效果 ====== */
+    .hero-bg video {
+        filter: blur(0px);
+        transition: filter 0.3s ease, transform 0.3s ease;
+    }
+
+    .hero-bg.scrolled video {
+        filter: blur(8px);
+        transform: scale(1.05);
+    }
+
+    .hero-bg.scrolled + .hero-overlay {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* ====== 响应式 ====== */
+    @media (max-width: 768px) {
+      .top-nav { padding: 16px 20px; }
+      .top-nav .logo-link { font-size: 16px; }
+      .top-nav .nav-links a { padding: 6px 10px; font-size: 12px; }
+
+      .hero-content h1 { font-size: 42px; }
+      .hero-content .subtitle { font-size: 14px; }
+
+      .quick-btn { width: 130px; height: 130px; }
+      .quick-btn .icon { font-size: 32px; }
+
+      .bottom-section .intro-text h2 { font-size: 22px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-content h1 { font-size: 32px; }
+      .quick-btn { width: 110px; height: 110px; }
+      .quick-btn .icon { font-size: 28px; }
+      .quick-btn .name { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ====== 背景 ====== -->
+<div class="hero-bg" id="heroBg">
+ <video 
+  id="bgVideo"
+  src="Background1.mp4"
+  autoplay
+  muted
+  loop
+  playsinline
+  style="width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; transition: transform 0.15s ease-out; will-change: transform;"
+></video>
+</div>
+<div class="hero-overlay"></div>
+
+<!-- ====== 顶部导航 ====== -->
+<nav class="top-nav">
+  <a href="landing.html" class="logo-link"><img src="icon/icon_China_new.png" alt="" style="width: 34px; height: 34px; vertical-align: middle;"> 中国<span>雪山</span>图鉴</a>
+  <ul class="nav-links">
+    <li><a href="index.html">首页</a></li>
+    <li><a href="mountains.html">雪山档案</a></li>
+    <li><a href="knowledge.html">知识库</a></li>
+    <li><a href="contact.html">加入我们</a></li>
+  </ul>
+</nav>
+
+<!-- ====== 中间大字 ====== -->
+<div class="hero-content" id="heroContent">
+  <h1>Chinese<br>Snow Mountains</h1>
+  <div class="subtitle">— 中国雪山图鉴 —</div>
+</div>
+
+<!-- ====== 下滑提示 ====== -->
+<div class="scroll-hint" id="scrollHint">
+  <div class="arrow"></div>
+  <div class="text">Scroll</div>
+</div>
+
+<!-- ====== 底部内容区 ====== -->
+<div class="bottom-section">
+  <div class="intro-text">
+    <h2>探索中国雪山之美</h2>
+    <p>
+      中国是世界上雪山资源最丰富的国家之一，拥有世界最高峰珠穆朗玛峰、
+      壮丽的贡嘎雪山、神秘的梅里雪山……本网站带你领略中国雪山的雄伟与壮美，
+      了解每一座雪山背后的故事。
+    </p>
+  </div>
+
+  <div class="quick-start">
+    <a href="index.html" class="quick-btn">
+      <div class="icon"><img src="icon/首页图标.png" alt="" style="width: 60px; height: 60px; vertical-align: middle;"></div>
+      <div class="name">开始浏览</div>
+      <div class="desc">雪山档案 & 知识库</div>
+    </a>
+    <a href="mountains.html" class="quick-btn">
+      <div class="icon"><img src="icon/雪山档案1.png" alt="" style="width: 58px; height: 58px; vertical-align: middle;"></div>
+      <div class="name">雪山档案</div>
+      <div class="desc">12座著名雪山详情</div>
+    </a>
+    <a href="knowledge.html" class="quick-btn">
+      <div class="icon"><img src="icon/知识库1.png" alt="" style="width: 60px; height: 60px; vertical-align: middle;"></div>
+      <div class="name">知识库</div>
+      <div class="desc">登山知识 & 装备指南</div>
+    </a>
+  </div>
+</div>
+
+<!-- ====== JS：滚动控制 ====== -->
+<script>
+  const heroBg = document.getElementById('heroBg');
+  const heroContent = document.getElementById('heroContent');
+  const scrollHint = document.getElementById('scrollHint');
+
+  let lastScrollY = 0;
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const viewHeight = window.innerHeight;
+
+    // 1. 滚动时背景模糊
+    if (scrollY > 100) {
+      heroBg.classList.add('scrolled');
+    } else {
+      heroBg.classList.remove('scrolled');
+    }
+
+    // 2. 滚动时中间大字淡出
+    const opacity = Math.max(0, 1 - scrollY / (viewHeight * 0.5));
+    const translateY = scrollY * 0.3;
+    heroContent.style.opacity = opacity;
+    heroContent.style.transform = `translate(-50%, calc(-50% - ${translateY}px))`;
+
+    // 3. 滑过一半时隐藏下滑提示
+    scrollHint.style.opacity = Math.max(0, 1 - scrollY / (viewHeight * 0.4));
+
+    lastScrollY = scrollY;
+  });
+
+  // 点击下滑提示 → 平滑滚动
+  scrollHint.addEventListener('click', () => {
+    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+  });
+</script>
+
+
+<!-- ====== 底部声明 ====== -->
+<footer style="
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 20px 20px;
+  font-size: 13px;
+  color: #afafc0;
+  background: #0b0b1a;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  line-height: 2;
+">
+  <p>本网站仅供技术学习与知识科普使用，内容仅供参考。</p>
+  <p>图片来源于 Unsplash、Pixabay 等开放图库。</p>
+  <p style="margin-top: 6px; font-size: 12px; color: #9696aa;">
+    © 2026 中国雪山图鉴 · 保留所有权利
+  </p>
+</footer>
+
+</body>
+</html>

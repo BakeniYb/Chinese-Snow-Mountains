@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识库 - 中国雪山图鉴</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Georgia', 'Noto Serif SC', serif;
+      background: #0f0f1a;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    .top-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 40px;
+      background: rgba(15,15,26,0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .top-nav .logo-link { font-size: 18px; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: 2px; }
+    .top-nav .logo-link span { color: #8ab4ff; }
+    .top-nav .nav-links { display: flex; gap: 6px; list-style: none; }
+    .top-nav .nav-links a {
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      padding: 7px 16px; border-radius: 8px; font-size: 13px; transition: all 0.3s;
+    }
+    .top-nav .nav-links a:hover,
+    .top-nav .nav-links a.active { color: #fff; background: rgba(255,255,255,0.08); }
+    .top-nav .nav-links a.active { color: #8ab4ff; background: rgba(138,180,255,0.1); }
+    .main-wrap { max-width: 1200px; margin: 0 auto; padding: 100px 24px 60px; }
+    .page-header { text-align: center; margin-bottom: 50px; }
+    .page-header h1 { font-size: 32px; font-weight: 600; color: #fff; letter-spacing: 0.05em; }
+    .page-header p { font-size: 14px; color: #8888aa; margin-top: 8px; }
+    .page-header .divider { width: 50px; height: 2px; background: linear-gradient(90deg, #8ab4ff, #a78bfa); margin: 16px auto 0; border-radius: 2px; }
+    .category-tabs {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .category-tab {
+      padding: 8px 20px; border-radius: 20px; font-size: 13px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #d5d5e6; cursor: pointer; transition: all 0.3s;
+      font-family: 'Georgia', 'Noto Serif SC', serif;
+    }
+    .category-tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+    .category-tab.active { color: #fff; background: rgba(138,180,255,0.15); border-color: rgba(138,180,255,0.3); }
+    .knowledge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .knowledge-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      perspective: 1000px;
+      height: 420px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-style: preserve-3d;
+    }
+    .knowledge-card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 18px;
+    }
+    .card-front {
+      background: rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+    }
+    .card-back {
+      background: rgba(20, 25, 40, 0.95);
+      transform: rotateY(180deg);
+      padding: 24px;
+      overflow-y: auto;
+      border: 1px solid rgba(138,180,255,0.15);
+    }
+    .card-img { width: 100%; height: 200px; object-fit: cover; display: block; background: #1a1a2e; }
+    .card-body { padding: 20px 24px 24px; flex: 1; display: flex; flex-direction: column; }
+    .card-category {
+      display: inline-block; font-size: 13px; color: #8ab4ff;
+      background: rgba(138,180,255,0.1);
+      padding: 4px 14px; border-radius: 12px;
+      margin-bottom: 10px; letter-spacing: 1px;
+    }
+    .card-body h3 { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 10px; line-height: 1.4; }
+    .card-body p {
+      font-size: 14px; color: #9999bb; line-height: 1.7; margin-bottom: 16px;
+      display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+      flex: 1;
+    }
+    .card-back h3 {
+      font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 16px; line-height: 1.4;
+      padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .card-back-content {
+      font-size: 15px; color: #ccc; line-height: 1.8; margin-bottom: 20px;
+    }
+    .card-link { font-size: 13px; color: #8ab4ff; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: gap 0.3s; }
+    .card-link:hover { gap: 10px; }
+    .resources-section {
+      margin-top: 60px; text-align: center; padding: 36px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+    }
+    .resources-section h3 { font-size: 16px; color: #fff; margin-bottom: 16px; }
+    .resource-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .resource-links a {
+      padding: 10px 24px; border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #dadaf5; text-decoration: none; font-size: 13px; transition: all 0.3s;
+    }
+    .resource-links a:hover { color: #fff; border-color: #8ab4ff; background: rgba(138,180,255,0.1); }
+    footer {
+      text-align: center; padding: 24px 20px; font-size: 12px; color: #555577;
+      border-top: 1px solid rgba(255,255,255,0.06); line-height: 2; background: #0b0b1a;
+    }
+    footer p:last-child { margin-top: 4px; font-size: 11px; color: #444466; }
+    @media (max-width: 820px) {
+      .top-nav { padding: 16px 20px; }
+      .top-nav .logo-link { font-size: 15px; }
+      .top-nav .nav-links a { padding: 5px 10px; font-size: 12px; }
+      .page-header h1 { font-size: 26px; }
+      .knowledge-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .top-nav .nav-links a { font-size: 11px; padding: 4px 8px; }
+      .card-img { height: 150px; }
+      .card-body { padding: 16px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="landing.html" class="logo-link"><img src="icon/icon_China_new.png" alt="" style="width: 34px; height: 34px; vertical-align: middle;"> 中国<span>雪山</span>图鉴</a>
+  <ul class="nav-links">
+    <li><a href="index.html">首页</a></li>
+    <li><a href="mountains.html">雪山档案</a></li>
+    <li><a href="knowledge.html" class="active">知识库</a></li>
+    <li><a href="contact.html">加入我们</a></li>
+  </ul>
+</nav>
+
+<div class="main-wrap">
+
+  <div class="page-header">
+    <h1><img src="icon/知识库2.png" alt="" style="width: 40px; height: 40px; vertical-align: middle;"> 雪山知识库</h1>
+    <p>从地质成因到攀登装备，带你全面了解雪山</p>
+    <div class="divider"></div>
+  </div>
+
+  <!-- 分类标签 -->
+  <div class="category-tabs" id="categoryTabs">
+    <div class="category-tab active" data-cat="all">全部</div>
+    <div class="category-tab" data-cat="地质成因">🌍 地质成因</div>
+    <div class="category-tab" data-cat="登山装备">🎒 登山装备</div>
+    <div class="category-tab" data-cat="登山历史">📜 登山历史</div>
+    <div class="category-tab" data-cat="安全知识">🛡️ 安全知识</div>
+    <div class="category-tab" data-cat="生态环保">🌿 生态环保</div>
+    <div class="category-tab" data-cat="登山指南">🧭 登山指南</div>
+    <div class="category-tab" data-cat="难度说明">📊 难度说明</div>
+  </div>
+
+  <!-- 知识卡片网格 -->
+  <div class="knowledge-grid" id="knowledgeGrid"></div>
+
+  <!-- 外部资源 -->
+  <div class="resources-section">
+    <h3>🔗 外部学习资源</h3>
+    <div class="resource-links">
+      <a href="https://baike.baidu.com" target="_blank">百度百科</a>
+      <a href="https://www.cmasports.cn/" target="_blank">中国登山协会</a>
+      <a href="https://unsplash.com/" target="_blank">Unsplash 图库</a> 
+      <a href="https://www.dili360.com/" target="_blank">中国国家地理</a>
+      <a href="https://www.nationalgeographic.com" target="_blank">国家地理</a>
+      <a href="https://www.8264.com" target="_blank">8264户外资料网</a>
+    </div>
+  </div>
+
+</div>
+
+
+
+<script>
+  var knowledgeData = [
+    {
+      "title": "雪山是如何形成的？",
+      "category": "地质成因",
+      "shortSummary": "板块碰撞 · 地壳抬升 · 积雪成峰",
+      "summary": "当板块碰撞挤压，地壳抬升形成山脉。如果海拔足够高，温度低于冰点，积雪常年不化，就形成了雪山。喜马拉雅山脉就是印度板块与欧亚板块碰撞的结果。",
+      "image": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=600&h=400&fit=crop",
+      "link": "https://baike.baidu.com/item/%E9%9B%AA%E5%B1%B1"
+    },
+    {
+      "title": "登山装备清单",
+      "category": "登山装备",
+      "shortSummary": "保暖衣物 · 登山靴 · 冰镐冰爪 · 安全装备",
+      "summary": "登山必备装备包括：冲锋衣、羽绒服、登山靴、冰镐、冰爪、安全带、主锁、下降器、头灯、登山杖、雪镜、防晒霜、保温水壶、急救包等。高海拔登山还需携带氧气瓶和卫星电话。",
+      "image": "knowledgePhoto/climbing.jpg",
+      "link": "https://baike.baidu.com/item/%E7%99%BB%E5%B1%B1%E8%A3%85%E5%A4%87"
+    },
+    {
+      "title": "中国著名登山队与历史",
+      "category": "登山历史",
+      "shortSummary": "1960年首登珠峰 · 1975年精确测量 · 2008年奥运圣火",
+      "summary": "1960年，中国登山队首次从北坡登顶珠穆朗玛峰。1975年，再次登顶并测得珠峰海拔为8848.13米。2008年，奥运圣火在珠峰峰顶传递，创造了人类登山史上的奇迹。",
+      "image": "knowledgePhoto/Chinese_climbing_team.jpg",
+      "credit": "图片来源：地大新闻网",
+      // "creditLink": "https://voice.cug.edu.cn/info/1006/16325.htm",
+      "link": "https://baike.baidu.com/item/%E4%B8%AD%E5%9B%BD%E7%99%BB%E5%B1%B1%E9%98%9F"
+    },
+    {
+      "title": "高原反应的症状与预防",
+      "category": "安全知识",
+      "shortSummary": "头痛恶心 · 逐步适应 · 充分补水 · 及时下撤",
+      "summary": "高原反应是人体急速进入高海拔地区后的生理反应，常见症状包括头痛、恶心、失眠、食欲不振等。预防方法：逐步适应海拔、充分补水、避免剧烈运动、服用乙酰唑胺等。严重时应立即下撤。",
+      "image": "knowledgePhoto/mountain_sickness_oxygen.jpg",
+      "link": "https://baike.baidu.com/item/%E9%AB%98%E5%8E%9F%E5%8F%8D%E5%BA%94"
+    },
+    {
+      "title": "雪山的生态系统",
+      "category": "生态环保",
+      "shortSummary": "森林草甸 · 流石滩 · 冰川带 · 珍稀动植物",
+      "summary": "雪山生态系统独特，从山脚到山顶依次分布着：山地森林带、高山草甸带、流石滩带、积雪冰川带。代表性动植物包括：雪莲、杜鹃、雪豹、藏羚羊、岩羊等。全球变暖正导致许多冰川急剧退缩。",
+      "image": "mountainPhoto/SiguniangShan四姑娘山/1.jpg",
+      "link": "https://www.bilibili.com/video/BV1Qf4y1P7rQ/?spm_id_from=333.337.search-card.all.click&vd_source=4cdbcc218d1a7efac141a65c76a399df"
+    },
+    {
+      "title": "最佳登山季节指南",
+      "category": "登山指南",
+      "shortSummary": "西藏5-10月 · 四川6-9月 · 新疆7-8月",
+      "summary": "中国不同雪山的最佳攀登季节不同。西藏雪山最佳季节为5-10月；四川雪山最佳季节为6-9月；新疆雪山最佳季节为7-8月。冬季大部分雪山雪崩风险高，不适合攀登。",
+      "image": "mountainPhoto/JadeDragonSnowMountain玉龙雪山/5.jpg",
+      "link": "https://zhuanlan.zhihu.com/p/583849077"
+    },
+    {
+      "title": "雪山难度等级说明",
+      "category": "难度说明",
+      "shortSummary": "入门5000m · 进阶5500m · 高难6000m · 极限7500m",
+      "summary": "登山难度一般分为：入门级（5000-5500m，如四姑娘山大峰、哈巴雪山）、进阶级（5500-6000m，如雪宝顶、玉珠峰）、高难度（6000-7000m，如阿尼玛卿、玉龙雪山）、极高难度（7000m以上，如珠峰、K2）。每上升一级，体能和经验要求成倍增加。",
+      "image": "mountainPhoto/K2乔戈里峰/2.jpg",
+      "link": "https://www.zhihu.com/question/264246995"
+    }
+  ];
+
+  var grid = document.getElementById('knowledgeGrid');
+  var tabs = document.querySelectorAll('.category-tab');
+
+  function renderCards(category) {
+    var filtered = category === 'all' ? knowledgeData : knowledgeData.filter(function(item) { return item.category === category; });
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div style="text-align:center;color:#555577;padding:60px 0;grid-column:1/-1;font-size:15px;">该分类暂无内容</div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < filtered.length; i++) {
+      var item = filtered[i];
+      html += '<div class="knowledge-card">' +
+        '<div class="card-inner">' +
+          '<div class="card-front">' +
+             '<div style="position:relative;">' +
+            '<img class="card-img" src="' + item.image + '" alt="' + item.title + '" loading="lazy">' +
+            (item.credit ? '<span style="position:absolute;top:6px;right:8px;font-size:12px;color:rgba(116, 133, 171,0.8);pointer-events:none;line-height:1.4;">' + item.credit + '</span>' : '') +
+            '</div>' +
+            '<div class="card-body">' +
+              '<span class="card-category">' + item.category + '</span>' +
+              '<h3>' + item.title + '</h3>' +
+              '<p>' + (item.shortSummary || item.summary) + '</p>' +
+              '<span class="card-link">悬停翻转查看详情 &rarr;</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="card-back">' +
+            '<h3>' + item.title + '</h3>' +
+            '<div class="card-back-content">' + item.summary + '</div>' +
+            '<a href="' + item.link + '" target="_blank" class="card-link">详细了解 &rarr;</a>' +
+          '</div>' +
+        '</div></div>';
+    }
+    grid.innerHTML = html;
+
+    // 添加翻转事件监听
+    var cards = grid.querySelectorAll('.knowledge-card');
+    for (var m = 0; m < cards.length; m++) {
+      (function(card) {
+        var flipTimeout;
+        card.addEventListener('mouseenter', function() {
+          clearTimeout(flipTimeout);
+          card.classList.add('flipped');
+        });
+        card.addEventListener('mouseleave', function() {
+          flipTimeout = setTimeout(function() {
+            card.classList.remove('flipped');
+          }, 2000);
+        });
+      })(cards[m]);
+    }
+  }
+
+  for (var j = 0; j < tabs.length; j++) {
+    tabs[j].addEventListener('click', function() {
+      for (var k = 0; k < tabs.length; k++) { tabs[k].classList.remove('active'); }
+      this.classList.add('active');
+      renderCards(this.getAttribute('data-cat'));
+    });
+  }
+
+  renderCards('all');
+</script>
+
+
+<!-- ====== 底部声明 ====== -->
+<footer style="
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 20px 20px;
+  font-size: 13px;
+  color: #afafc0;
+  background: #0b0b1a;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  line-height: 2;
+">
+  <p>本网站仅供技术学习与知识科普使用，内容仅供参考。</p>
+  <p>图片来源于 Unsplash、Pixabay 等开放图库。</p>
+  <p style="margin-top: 6px; font-size: 12px; color: #9696aa;">
+    © 2026 中国雪山图鉴 · 保留所有权利
+  </p>
+</footer>
+
+</body>
+</html>

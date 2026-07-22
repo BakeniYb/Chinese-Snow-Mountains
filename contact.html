@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>加入我们 - 中国雪山图鉴</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', 'Noto Serif SC', serif;
+      color: #e8e8f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #070b14;
+    }
+
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 40%, rgba(30, 45, 80, 0.35) 0%, transparent 70%),
+        linear-gradient(160deg, #0a0f1c 0%, #070b14 55%, #060910 100%);
+    }
+
+    .hero-visual {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: clamp(340px, 48vw, 680px);
+      height: 100vh;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .hero-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+    }
+    .hero-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        #070b14 0%,
+        rgba(7, 11, 20, 0.85) 12%,
+        rgba(7, 11, 20, 0.35) 32%,
+        transparent 58%
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(7, 11, 20, 0.5) 0%,
+        transparent 30%
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ====== 导航 ====== */
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(7, 11, 20, 0.35);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .top-nav .logo-link {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 2px;
+    }
+    .top-nav .logo-link span { color: #8ab4ff; }
+    .top-nav .nav-links { display: flex; gap: 6px; list-style: none; }
+    .top-nav .nav-links a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+    .top-nav .nav-links a:hover,
+    .top-nav .nav-links a.active {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+    .top-nav .nav-links a.active {
+      color: #8ab4ff;
+      background: rgba(138,180,255,0.1);
+    }
+
+    /* ====== 主内容区 ====== */
+    .page-content {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-wrap {
+      flex: 1;
+      width: 100%;
+      max-width: 40%;
+      padding: 108px clamp(20px, 4vw, 56px) 48px;
+      margin-left: 30%;
+    }
+
+    /* 毛玻璃面板 */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(24px) saturate(1.5);
+      -webkit-backdrop-filter: blur(24px) saturate(1.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 16px 48px rgba(0, 0, 0, 0.22);
+    }
+
+    /* Hero */
+    .page-header {
+      text-align: center;
+      padding: 36px 28px 30px;
+      margin-bottom: 18px;
+    }
+    .page-header .icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.12em;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: rgba(234, 237, 255, 0.75);
+      margin-top: 10px;
+      letter-spacing: 0.06em;
+    }
+    .page-header .divider {
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #8ab4ff, #a78bfa, transparent);
+      margin: 18px auto 0;
+    }
+
+    /* 表单 */
+    .form-panel {
+      padding: 30px 28px 32px;
+      margin-bottom: 36px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group:last-of-type { margin-bottom: 24px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: rgb(225, 233, 255,0.9);
+      margin-bottom: 8px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255, 255, 255, 0.045);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 12px;
+      color: rgba(255, 255, 255, 0.92);
+      font-family: 'Georgia', 'Noto Serif SC', serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(160, 165, 195, 0.4);
+    }
+    .form-group input:not(:placeholder-shown),
+    .form-group textarea:not(:placeholder-shown),
+    .form-group select:not([value=""]):not([value="请选择"]) {
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a1a2e;
+    }
+    .form-group input:-webkit-autofill,
+    .form-group input:-webkit-autofill:hover,
+    .form-group input:-webkit-autofill:focus,
+    .form-group textarea:-webkit-autofill,
+    .form-group textarea:-webkit-autofill:hover,
+    .form-group textarea:-webkit-autofill:focus {
+      background: rgba(255, 255, 255, 0.95) !important;
+      color: #1a1a2e !important;
+      -webkit-text-fill-color: #1a1a2e !important;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: rgba(138, 180, 255, 0.4);
+      box-shadow: 0 0 0 3px rgba(138, 180, 255, 0.08);
+    }
+    .form-group select {
+      appearance: none;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .form-group select:not([value=""]):not([value="请选择"]) {
+      color: #1a1a2e;
+    }
+    .form-group select option { background: #141824; color: #fff; }
+    .form-group textarea { min-height: 96px; resize: vertical; line-height: 1.65; }
+    .form-group .row { display: flex; gap: 14px; }
+    .form-group .row > * { flex: 1; min-width: 0; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(120, 160, 240, 0.75), rgba(155, 130, 230, 0.75));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Georgia', 'Noto Serif SC', serif;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+      letter-spacing: 0.1em;
+    }
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 32px rgba(120, 160, 240, 0.28);
+      background: linear-gradient(135deg, #7aa0f0, #9b82e6);
+    }
+
+    /* 留言区 */
+    .messages-section {
+      margin-bottom: 0px;
+    }
+    .messages-section h2 {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+    .messages-section h2 span {
+      color: rgba(160, 165, 195, 0.55);
+      font-size: 13px;
+      font-weight: 400;
+    }
+    .messages-panel {
+      padding: 6px 22px;
+      min-height: 88px;
+      max-height: 400px;   
+      overflow-y: auto;      
+    }
+    .message-item {
+      display: flex;
+      gap: 14px;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .message-item:last-child { border-bottom: none; }
+    .message-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(120, 160, 240, 0.5), rgba(155, 130, 230, 0.5));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .message-body { flex: 1; min-width: 0; }
+    .message-body .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .message-body .meta .name {
+      color: rgba(225, 228, 245, 0.9);
+      font-weight: 600;
+    }
+    .message-body .meta .time {
+      color: rgba(140, 145, 175, 0.55);
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .message-body .content {
+      color: rgba(175, 180, 210, 0.75);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .message-empty {
+      text-align: center;
+      color: rgba(150, 155, 185, 0.5);
+      padding: 32px 0;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+    }
+
+   
+    @media (max-width: 820px) {
+      .hero-visual {
+        width: 100%;
+        opacity: 0.45;
+      }
+      .hero-visual::before {
+        background: linear-gradient(
+          to bottom,
+          rgba(7, 11, 20, 0.92) 0%,
+          rgba(7, 11, 20, 0.7) 40%,
+          rgba(7, 11, 20, 0.5) 100%
+        );
+      }
+      .main-wrap {
+        max-width: none;
+        padding-top: 96px;
+      }
+      .top-nav .logo-link { font-size: 15px; }
+      .top-nav .nav-links a { padding: 5px 10px; font-size: 12px; }
+    }
+    @media (max-width: 480px) {
+      .top-nav .nav-links { gap: 0; }
+      .top-nav .nav-links a { font-size: 11px; padding: 4px 8px; }
+      .form-group .row { flex-direction: column; gap: 0; }
+      .page-header h1 { font-size: 24px; }
+    }
+
+    /* 滚动文字特效 */
+    .scrolling-text-container {
+      position: absolute;
+      bottom: 40px;
+      left: 30px;
+      right: 30px;
+      color: rgba(255, 255, 255, 0.85);
+      text-align: center;
+      pointer-events: none;
+      height: 60px;
+      overflow: hidden;
+    }
+    .scrolling-text-item {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    .scrolling-text-item.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .scrolling-text-item p {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* 第1个滚动文字（左侧） */
+    .form-bg-scrolling-text {
+      position: absolute;
+      top: 600px;
+      left: 2%;
+      z-index: 5;
+      width: 42%;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .form-bg-scrolling-text-item {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+    .form-bg-scrolling-text-item.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .form-bg-scrolling-text-item p {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* 第2个滚动文字（右侧） */
+    .right-bg-scrolling-text {
+      position: absolute;
+      top: 750px;
+      right: 2%;
+      z-index: 5;
+      width: 42%;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .right-bg-scrolling-text-item {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+    .right-bg-scrolling-text-item.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .right-bg-scrolling-text-item p {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* 第3个滚动文字（左侧） */
+    .scrolling-text-3 {
+      position: absolute;
+      top: 900px;
+      left: 1%;
+      z-index: 5;
+      width: 32%;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .scrolling-text-3-item {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+    .scrolling-text-3-item.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .scrolling-text-3-item p {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* 第4个滚动文字（右侧） */
+    .scrolling-text-4 {
+      position: absolute;
+      top: 1050px;
+      right: 1%;
+      z-index: 5;
+      width: 32%;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .scrolling-text-4-item {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+    .scrolling-text-4-item.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .scrolling-text-4-item p {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* 第5个滚动文字（左侧） */
+    .scrolling-text-5 {
+      position: absolute;
+      top: 1200px;
+      left: 1%;
+      z-index: 5;
+      width: 32%;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .scrolling-text-5-item {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+    .scrolling-text-5-item.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .scrolling-text-5-item p {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* 第6个滚动文字（右侧） */
+    .scrolling-text-6 {
+      position: absolute;
+      top: 1350px;
+      right: 1%;
+      z-index: 5;
+      width: 32%;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .scrolling-text-6-item {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 2s ease, transform 2s ease;
+    }
+    .scrolling-text-6-item.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .scrolling-text-6-item p {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* ===== 图片跑马灯 ===== */
+    .image-carousel {
+      width: 100vw;         
+      margin-left: calc(-50vw + 50%);  
+      border-radius: 0;
+      background: transparent;
+      backdrop-filter: none;
+      border: none;
+      overflow: visible;
+      position: relative;
+      z-index: 2;
+      padding-bottom: 45px;
+    }
+    .image-carousel .track {
+      display: flex;
+      gap: 0;
+      animation: scrollLeft 30s linear infinite;
+      width: max-content;
+    }
+
+    .image-carousel .track img {
+      height: 400px;   
+      width: auto;
+      flex-shrink: 0;
+      border: none;
+      border-radius: 0;
+      display: block;
+      background: #0a0f1c;
+    }
+ 
+    /*每张图片不同角度，更有动感 */
+    .image-carousel .track img:nth-child(odd) {
+      transform: rotate(6deg);
+    }
+    .image-carousel .track img:nth-child(even) {
+      transform: rotate(-6deg);
+    }
+   
+    .slogan-section {
+      text-align: center;
+      padding: 50px 0 40px;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 15px; 
+    }
+
+    .slogan-image {
+      width: 900px;   
+      height: auto;
+      display: inline-block;
+      margin-left: 25px;
+    }
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+
+<!-- 第1个滚动文字（左侧） -->
+<div class="form-bg-scrolling-text" id="formBgScrollingText">
+  <div class="form-bg-scrolling-text-item active">
+    <p>山不会走向你，但你可以走向山</p>
+  </div>
+</div>
+
+<!-- 第2个滚动文字（右侧） -->
+<div class="right-bg-scrolling-text" id="rightBgScrollingText">
+  <div class="right-bg-scrolling-text-item active">
+    <p>在云端之上，遇见另一个自己</p>
+  </div>
+</div>
+
+<!-- 第3个滚动文字（左侧） -->
+<div class="scrolling-text-3" id="scrollingText3">
+  <div class="scrolling-text-3-item active">
+    <p>每一步都是修行，每一座山都是答案</p>
+  </div>
+</div>
+
+<!-- 第4个滚动文字（右侧） -->
+<div class="scrolling-text-4" id="scrollingText4">
+  <div class="scrolling-text-4-item active">
+    <p>风雪过后，自有晴空万里</p>
+  </div>
+</div>
+
+<!-- 第5个滚动文字（左侧） -->
+<div class="scrolling-text-5" id="scrollingText5">
+  <div class="scrolling-text-5-item active">
+    <p>山在那里，所以我要去</p>
+  </div>
+</div>
+
+<!-- 第6个滚动文字（右侧） -->
+<div class="scrolling-text-6" id="scrollingText6">
+  <div class="scrolling-text-6-item active">
+    <p>山不会走向你，但你可以走向山</p>
+  </div>
+</div>
+
+<div style="height: 520px; position: relative; overflow: hidden; border-radius: 16px;">
+  <img src="contactPhoto/contact_background.jpg" alt="雪山风景"
+    style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;transform:scale(1.08);">
+  <!-- 底部渐变遮罩 -->
+  <div style="position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(transparent,rgba(0,0,0,0.35));pointer-events:none;"></div>
+  <div style="position:absolute;bottom:28px;left:30px;right:30px;color:#fff;text-align:center;pointer-events:none;">
+    <p style="font-size:17px;font-weight:600;letter-spacing:2px;text-shadow:0 2px 16px rgba(0,0,0,0.5);margin-bottom:6px;line-height:1.7;">
+      山不会走向你<br>但你可以走向山
+    </p>
+    <p style="font-size:13px;font-weight:400;letter-spacing:3px;text-shadow:0 2px 12px rgba(0,0,0,0.4);color:rgba(255,255,255,0.75);">
+      — 每一座雪山，都在等一个出发的理由 —
+    </p>
+  </div>
+</div>
+
+<nav class="top-nav">
+  <a href="landing.html" class="logo-link"><img src="icon/icon_China_new.png" alt="" style="width: 34px; height: 34px; vertical-align: middle;"> 中国<span>雪山</span>图鉴</a>
+  <ul class="nav-links">
+    <li><a href="index.html">首页</a></li>
+    <li><a href="mountains.html">雪山档案</a></li>
+    <li><a href="knowledge.html">知识库</a></li>
+    <li><a href="contact.html" class="active">加入我们</a></li>
+  </ul>
+</nav>
+
+<div class="page-content">
+  <div class="main-wrap">
+
+    <div class="page-header">
+      <div class="icon"><img src="icon/icon_China_new.png" alt="" style="width: 53px; height: 53px; vertical-align: middle;"></div>
+      <h1>加入我们</h1>
+      <p>分享你的雪山故事，与万千山友同行</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="form-panel glass-panel">
+      <form id="contactForm">
+        <div class="form-group">
+          <label>你的名字</label>
+          <input type="text" id="formName" placeholder="例如：山野行者">
+        </div>
+        <div class="form-group">
+          <div class="row">
+            <div>
+              <label>邮箱</label>
+              <input type="email" id="formEmail" placeholder="your@email.com">
+            </div>
+            <div>
+              <label>兴趣方向</label>
+              <select id="formInterest">
+                <option value="">请选择</option>
+                <option value="登山">🏔️ 登山</option>
+                <option value="摄影">📸 摄影</option>
+                <option value="徒步">🥾 徒步</option>
+                <option value="科普">📖 科普</option>
+                <option value="其他">✨ 其他</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>留言 / 分享你的故事</label>
+          <textarea id="formMessage" placeholder="请在群山之间留下你的回音吧……"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">✉️ 提交留言</button>
+      </form>
+    </div>
+    
+
+    <div class="messages-section">
+      <h2><img src="icon/留言板.png" alt="" style="width: 23px; height: 23px; vertical-align: middle;"> 山友留言 <span id="msgCount">(0)</span></h2>
+      <div id="messageList" class="glass-panel messages-panel">
+        <div class="message-empty">还没有留言，快来写下第一条吧~</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标语 -->
+  <div class="slogan-section">
+    <img src="contactPhoto/contactSlogan.png" alt="山在那里，我在路上" class="slogan-image">
+  </div>
+
+  <!-- 图片跑马灯 -->
+    <div class="image-carousel">
+      <div class="track">
+        <!-- 图片重复两遍，实现无缝循环 -->
+        <img src="contactPhoto/3.jpg" alt="">
+        <img src="contactPhoto/2.jpg" alt="">
+        <img src="contactPhoto/4.jpg" alt="">
+        <img src="contactPhoto/1.jpg" alt="">
+        
+        <!-- 第二遍 -->
+        <img src="contactPhoto/3.jpg" alt="">
+        <img src="contactPhoto/2.jpg" alt="">
+        <img src="contactPhoto/4.jpg" alt="">
+        <img src="contactPhoto/1.jpg" alt="">
+      </div>
+    </div>
+</div>
+
+<script>
+  var form = document.getElementById('contactForm');
+  var nameInput = document.getElementById('formName');
+  var interestSelect = document.getElementById('formInterest');
+  var messageInput = document.getElementById('formMessage');
+  var messageList = document.getElementById('messageList');
+  var msgCount = document.getElementById('msgCount');
+
+  function loadMessages() {
+    // 默认留言
+    var defaultMessages = [
+      {
+        avatar: '<img src="contactPhoto/Bakeni.jpg" style="width:33px;height:33px;border-radius:50%;object-fit:cover;">',
+        name: 'BakeniYb',
+        interest: '摄影',
+        content: '祝我曾经那两个嚷嚷着要去雪山常住的朋友有一天能实现梦想',
+        time: '2026/07/19'
+      }
+    ];
+
+    // 本地留言
+    var localMessages = JSON.parse(localStorage.getItem('snowMessages') || '[]');
+
+    // 合并
+    var messages = defaultMessages.concat(localMessages);
+
+    msgCount.textContent = '(' + messages.length + ')';
+    
+    if (messages.length === 0) {
+      messageList.innerHTML = '<div class="message-empty">还没有留言，快来写下第一条吧~</div>';
+      return;
+    }
+    
+    var html = '';
+    for (var i = 0; i < messages.length; i++) {
+      var msg = messages[i];
+      html += '<div class="message-item">' +
+        '<div class="message-avatar">' + msg.avatar + '</div>' +
+        '<div class="message-body">' +
+          '<div class="meta">' +
+            '<span class="name">' + msg.name + (msg.interest ? ' · ' + msg.interest : '') + '</span>' +
+            '<span class="time">' + msg.time + '</span>' +
+          '</div>' +
+          '<div class="content">' + msg.content + '</div>' +
+        '</div></div>';
+    }
+    messageList.innerHTML = html;
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name = nameInput.value.trim();
+    var message = messageInput.value.trim();
+    if (!name || !message) {
+      var errorMsg = document.createElement('div');
+      errorMsg.className = 'custom-error';
+      errorMsg.innerHTML = '⚠️ 请至少填写名字和留言内容';
+      errorMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(30,60,120,0.9);color:#e8e8f0;padding:12px24px;border-radius:8px;font-size:14px;font-family:"Georgia","Noto Serif SC",serif;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+      document.body.appendChild(errorMsg);
+      setTimeout(function(){document.body.removeChild(errorMsg);},3000);
+      return;
+    }
+    var messages = JSON.parse(localStorage.getItem('snowMessages') || '[]');
+    var avatars = ['🥾', '🏔️', '⛰️', '🧗', '📸', '🌄'];
+    var interest = interestSelect.value ? interestSelect.options[interestSelect.selectedIndex].text : '';
+    messages.unshift({
+      avatar: avatars[Math.floor(Math.random() * 6)],
+      name: name,
+      interest: interest,
+      content: message,
+      time: new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit' })
+    });
+    localStorage.setItem('snowMessages', JSON.stringify(messages));
+    form.reset();
+    loadMessages();
+  });
+
+  loadMessages();
+
+  // 初始化select样式
+  function updateSelectStyle() {
+    if (interestSelect.value && interestSelect.value !== '') {
+      interestSelect.style.background = 'rgba(255, 255, 255, 0.95)';
+      interestSelect.style.color = '#1a1a2e';
+    } else {
+      interestSelect.style.background = 'rgba(255, 255, 255, 0.045)';
+      interestSelect.style.color = 'rgba(255, 255, 255, 0.8)';
+    }
+  }
+
+  // 页面加载时设置初始样式
+  updateSelectStyle();
+
+  // 处理select选择变化
+  interestSelect.addEventListener('change', updateSelectStyle);
+
+  // 滚动文字特效
+  var quotes = [
+    '山不会走向你，但你可以走向山',
+    '在云端之上，遇见另一个自己',
+    '每一步都是修行，每一座山都是答案',
+    '风雪过后，自有晴空万里',
+    '山在那里，所以我要去',
+    '攀登不是为了征服山，而是为了征服自己',
+    '站在山顶，世界在你脚下，也在你心中',
+    '山川不语，却教会我们沉默的力量',
+    '每一次登顶，都是对生命的重新定义',
+    '在群山之间，找到内心的宁静与辽阔'
+  ];
+
+  var currentQuoteIndex = 0;
+  var scrollingContainer = document.getElementById('scrollingText');
+
+  function changeQuote() {
+    var items = scrollingContainer.querySelectorAll('.scrolling-text-item');
+    items.forEach(function(item) {
+      item.classList.remove('active');
+    });
+
+    currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+    var newItem = document.createElement('div');
+    newItem.className = 'scrolling-text-item';
+    newItem.innerHTML = '<p>' + quotes[currentQuoteIndex] + '</p>';
+    scrollingContainer.appendChild(newItem);
+
+    setTimeout(function() {
+      newItem.classList.add('active');
+    }, 50);
+
+    setTimeout(function() {
+      if (scrollingContainer.children.length > 1) {
+        scrollingContainer.removeChild(scrollingContainer.children[0]);
+      }
+    }, 1000);
+  }
+
+
+  // 第1个滚动文字
+  var formBgScrollingContainer = document.getElementById('formBgScrollingText');
+  var formBgCurrentIndex = 0;
+
+  function changeFormBgQuote() {
+    var items = formBgScrollingContainer.querySelectorAll('.form-bg-scrolling-text-item');
+    items.forEach(function(item) {
+      item.classList.remove('active');
+    });
+
+    formBgCurrentIndex = (formBgCurrentIndex + 1) % quotes.length;
+    var newItem = document.createElement('div');
+    newItem.className = 'form-bg-scrolling-text-item';
+    newItem.innerHTML = '<p>' + quotes[formBgCurrentIndex] + '</p>';
+    formBgScrollingContainer.appendChild(newItem);
+
+    setTimeout(function() {
+      newItem.classList.add('active');
+    }, 50);
+
+    setTimeout(function() {
+      if (formBgScrollingContainer.children.length > 1) {
+        formBgScrollingContainer.removeChild(formBgScrollingContainer.children[0]);
+      }
+    }, 2000);
+  }
+
+  setInterval(changeFormBgQuote, 5000);
+
+  // 第2个滚动文字
+  var rightBgScrollingContainer = document.getElementById('rightBgScrollingText');
+  var rightBgCurrentIndex = 2;
+
+  function changeRightBgQuote() {
+    var items = rightBgScrollingContainer.querySelectorAll('.right-bg-scrolling-text-item');
+    items.forEach(function(item) {
+      item.classList.remove('active');
+    });
+
+    rightBgCurrentIndex = (rightBgCurrentIndex + 1) % quotes.length;
+    var newItem = document.createElement('div');
+    newItem.className = 'right-bg-scrolling-text-item';
+    newItem.innerHTML = '<p>' + quotes[rightBgCurrentIndex] + '</p>';
+    rightBgScrollingContainer.appendChild(newItem);
+
+    setTimeout(function() {
+      newItem.classList.add('active');
+    }, 50);
+
+    setTimeout(function() {
+      if (rightBgScrollingContainer.children.length > 1) {
+        rightBgScrollingContainer.removeChild(rightBgScrollingContainer.children[0]);
+      }
+    }, 2000);
+  }
+
+  setInterval(changeRightBgQuote, 5000);
+
+  // 第3个滚动文字
+  var scrollingText3 = document.getElementById('scrollingText3');
+  var index3 = 4;
+
+  function changeQuote3() {
+    var items = scrollingText3.querySelectorAll('.scrolling-text-3-item');
+    items.forEach(function(item) {
+      item.classList.remove('active');
+    });
+
+    index3 = (index3 + 1) % quotes.length;
+    var newItem = document.createElement('div');
+    newItem.className = 'scrolling-text-3-item';
+    newItem.innerHTML = '<p>' + quotes[index3] + '</p>';
+    scrollingText3.appendChild(newItem);
+
+    setTimeout(function() {
+      newItem.classList.add('active');
+    }, 50);
+
+    setTimeout(function() {
+      if (scrollingText3.children.length > 1) {
+        scrollingText3.removeChild(scrollingText3.children[0]);
+      }
+    }, 2000);
+  }
+
+  setInterval(changeQuote3, 5000);
+
+  // 第4个滚动文字
+  var scrollingText4 = document.getElementById('scrollingText4');
+  var index4 = 6;
+
+  function changeQuote4() {
+    var items = scrollingText4.querySelectorAll('.scrolling-text-4-item');
+    items.forEach(function(item) {
+      item.classList.remove('active');
+    });
+
+    index4 = (index4 + 1) % quotes.length;
+    var newItem = document.createElement('div');
+    newItem.className = 'scrolling-text-4-item';
+    newItem.innerHTML = '<p>' + quotes[index4] + '</p>';
+    scrollingText4.appendChild(newItem);
+
+    setTimeout(function() {
+      newItem.classList.add('active');
+    }, 50);
+
+    setTimeout(function() {
+      if (scrollingText4.children.length > 1) {
+        scrollingText4.removeChild(scrollingText4.children[0]);
+      }
+    }, 2000);
+  }
+
+  setInterval(changeQuote4, 5000);
+
+  // 第5个滚动文字
+  var scrollingText5 = document.getElementById('scrollingText5');
+  var index5 = 8;
+
+  function changeQuote5() {
+    var items = scrollingText5.querySelectorAll('.scrolling-text-5-item');
+    items.forEach(function(item) {
+      item.classList.remove('active');
+    });
+
+    index5 = (index5 + 1) % quotes.length;
+    var newItem = document.createElement('div');
+    newItem.className = 'scrolling-text-5-item';
+    newItem.innerHTML = '<p>' + quotes[index5] + '</p>';
+    scrollingText5.appendChild(newItem);
+
+    setTimeout(function() {
+      newItem.classList.add('active');
+    }, 50);
+
+    setTimeout(function() {
+      if (scrollingText5.children.length > 1) {
+        scrollingText5.removeChild(scrollingText5.children[0]);
+      }
+    }, 2000);
+  }
+
+  setInterval(changeQuote5, 5000);
+
+  // 第6个滚动文字
+  var scrollingText6 = document.getElementById('scrollingText6');
+  var index6 = 9;
+
+  function changeQuote6() {
+    var items = scrollingText6.querySelectorAll('.scrolling-text-6-item');
+    items.forEach(function(item) {
+      item.classList.remove('active');
+    });
+
+    index6 = (index6 + 1) % quotes.length;
+    var newItem = document.createElement('div');
+    newItem.className = 'scrolling-text-6-item';
+    newItem.innerHTML = '<p>' + quotes[index6] + '</p>';
+    scrollingText6.appendChild(newItem);
+
+    setTimeout(function() {
+      newItem.classList.add('active');
+    }, 50);
+
+    setTimeout(function() {
+      if (scrollingText6.children.length > 1) {
+        scrollingText6.removeChild(scrollingText6.children[0]);
+      }
+    }, 2000);
+  }
+
+  setInterval(changeQuote6, 5000);
+</script>
+
+<!-- ====== 底部声明 ====== -->
+<footer style="
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 20px 20px;
+  font-size: 13px;
+  color: #afafc0;
+  background: #0b0b1a;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  line-height: 2;
+">
+  <p>本网站仅供技术学习与知识科普使用，内容仅供参考。</p>
+  <p>图片来源于 Unsplash、Pixabay 等开放图库。</p>
+  <p style="margin-top: 6px; font-size: 12px; color: #9696aa;">
+    © 2026 中国雪山图鉴 · 保留所有权利
+  </p>
+</footer>
+
+</body>
+</html>
